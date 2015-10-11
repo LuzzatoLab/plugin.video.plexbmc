@@ -20,7 +20,7 @@ class PlexMediaServer:
         self.uuid = uuid
         self.server_name = name
         self.discovery = discovery
-		self.local_uri=[]
+        self.local_uri=[]
         self.external_uri=None
         self.access_uri=None
 
@@ -128,19 +128,19 @@ class PlexMediaServer:
 
     def get_discovery(self):
         return self.discovery
-		
-	def set_local_uri(self, uris):
+        
+    def set_local_uri(self, uris):
         self.local_uri=uris
 
-	def set_best_uri(self, uri):
+    def set_best_uri(self, uri):
         self.access_uri = uri
-	
-	def is_encrypted(self):
+    
+    def is_encrypted(self):
         if self.external_uri is not None and self.external_uri.startswith('https'):
             return True
         else:
             return False
-	
+    
     def find_uri_match(self, uri):
         if uri == self.external_uri or uri in self.local_uri:
             return True

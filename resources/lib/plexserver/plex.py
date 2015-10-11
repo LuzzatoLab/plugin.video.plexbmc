@@ -343,7 +343,7 @@ class Plex:
         count = 0
         for server in server_list:
 
-			# we are only interested in devices that offer media
+            # we are only interested in devices that offer media
             if server.get('provides').count('server') == 0:
                 continue
 
@@ -355,7 +355,7 @@ class Plex:
                     remote_uri = c.get('uri')
                 else:
                     local_uris.append(c.get('uri'))
-		
+        
             myplex_server = PlexMediaServer(name=server.get('name').encode('utf-8'),
                                             uri = remote_uri,
                                             discovery="myplex",
