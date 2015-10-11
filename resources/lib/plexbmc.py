@@ -1196,7 +1196,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         if resume:
             item.setProperty('ResumeTime', str(resume) )
             item.setProperty('TotalTime', str(duration) )
-			item.setProperty('StartOffset', str(resume) )
+            item.setProperty('StartOffset', str(resume) )
             printDebug.info("Playback from resume point: %s" % resume)
 
     if streams['type'] == "picture":
