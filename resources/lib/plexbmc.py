@@ -213,8 +213,8 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
         if extraData.get('partialTV') == 1:
             liz.setProperty('TotalTime', '100')
             liz.setProperty('ResumeTime', '50')
-			
-		#assign artwork
+            
+        #assign artwork
     fanart = extraData.get('fanart_image','')
     poster = extraData.get('thumb', '')
     banner = extraData.get('banner', '')
@@ -224,17 +224,17 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
     if fanart:
         printDebug.debug("Setting fan art as %s" % fanart)
         liz.setProperty('fanart_image', fanart)
-		
+        
     if banner:
         printDebug.debug("Setting banner as %s" % banner)
         liz.setProperty('banner', '%s' % banner)
-		
+        
     if season_thumb:
         printDebug.debug("Setting season Thumb as %s" % season_thumb)
         liz.setProperty('seasonThumb', '%s' % season_thumb)
 
-	liz.setArt({"fanart":fanart, "poster":poster, "banner":banner})	
-		
+    liz.setArt({"fanart":fanart, "poster":poster, "banner":banner}) 
+        
     if context is not None:
         if not folder and extraData.get('type','video').lower() == "video":
             #Play Transcoded
@@ -1132,7 +1132,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         full_data = True
 
     streams=getAudioSubtitlesMedia(server,tree, full_data)
-	
+    
     if force and streams['type'] == "music":
         playPlaylist(server, streams)
         return
@@ -1209,7 +1209,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         return
     else:
         start = xbmcplugin.setResolvedUrl(pluginhandle, True, item)
-		if shelf:
+        if shelf:
             # if launched from widget, use player.play for playback so artwork and resume works correctly
             xbmcplugin.setResolvedUrl(pluginhandle, False, item)
             start = xbmc.Player().play(playurl,item)
