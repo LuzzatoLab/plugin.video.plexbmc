@@ -56,7 +56,7 @@ class PlexMediaServer:
 
     def get_details(self):
         return {'serverName': self.server_name,
-                'uri   '    : self.get_uri(),
+                'uri'    : self.get_uri(),
                 'discovery': self.discovery,
                 'token': self.token,
                 'uuid': self.uuid,
@@ -131,7 +131,7 @@ class PlexMediaServer:
         
     def set_local_uri(self, uris):
         self.local_uri=uris
-
+        
     def set_best_uri(self, uri):
         self.access_uri = uri
     
