@@ -144,14 +144,14 @@ def amberskin():
             window.setProperty("plexbmc.%d.released" % section_count,
                                "ActivateWindow(%s,%s%s%s&mode=%s,return)" % (
                                    window_name, base_url, path, "/newest", mode))
-            window.setProperty("plexbmc.%d.ondeck.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/onDeck", mode, settings.get_setting('shelflimit') ))
-            window.setProperty("plexbmc.%d.recent.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/recentlyAdded", mode, settings.get_setting('shelflimit') ))
+            window.setProperty("plexbmc.%d.ondeck.content" % (section_count) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/onDeck", mode, settings.get_setting('shelflimit') ))
+            window.setProperty("plexbmc.%d.recent.content" % (section_count) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/recentlyAdded", mode, settings.get_setting('shelflimit') ))
 
         #Set shared flag
             if not server.is_owned():
-               window.setProperty("plexbmc.%d.shared"     % (sectionCount) , "true")
+               window.setProperty("plexbmc.%d.shared"     % (section_count) , "true")
             else:
-               window.setProperty("plexbmc.%d.shared"     % (sectionCount) , "false")
+               window.setProperty("plexbmc.%d.shared"     % (section_count) , "false")
 
             printDebug.debug(
                 "Building window properties index [%s] which is [%s]" % (section_count, section.get_title()))
