@@ -213,34 +213,34 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
         if extraData.get('partialTV') == 1:
             liz.setProperty('TotalTime', '100')
             liz.setProperty('ResumeTime', '50')
-			
-		#assign artwork
+            
+        #assign artwork
     fanart = extraData.get('fanart_image','')
     poster = extraData.get('thumb', '')
     banner = extraData.get('banner', '')
     season_thumb = extraData.get('season_thumb', '')
-	tvshow_image = extraData.get('tvshow_image', '')
-	
+    tvshow_image = extraData.get('tvshow_image', '')
+    
     if season_thumb: poster = season_thumb
     
     if fanart:
         printDebug.debug("Setting fan art as %s" % fanart)
         liz.setProperty('fanart_image', fanart)
-	
-	if tvshow_image:
-		printDebug.debug("Setting TV Show Image as %s" % tvshow_image)
-		liz.setProperty('tvshow_image', '%s' % tvshow_image)
-	
+    
+    if tvshow_image:
+        printDebug.debug("Setting TV Show Image as %s" % tvshow_image)
+        liz.setProperty('tvshow_image', '%s' % tvshow_image)
+    
     if banner:
         printDebug.debug("Setting banner as %s" % banner)
         liz.setProperty('banner', '%s' % banner)
-		
+        
     if season_thumb:
         printDebug.debug("Setting season Thumb as %s" % season_thumb)
         liz.setProperty('seasonThumb', '%s' % season_thumb)
 
-	liz.setArt({"fanart":fanart, "poster":poster, "banner":banner})	
-		
+    liz.setArt({"fanart":fanart, "poster":poster, "banner":banner}) 
+        
     if context is not None:
         if not folder and extraData.get('type','video').lower() == "video":
             #Play Transcoded
@@ -512,7 +512,7 @@ def enforceSkinView(mode):
                        'Wall'       : 503 ,
                        'BigList'    : 510 }
 
-	Night_views = {    'List #1' : 100,
+    Night_views = {    'List #1' : 100,
                        'List #2' : 110,
                        'List #3' : 120,
                        'Poster #1' : 200,
@@ -672,13 +672,13 @@ def TVShows( url, tree=None ):
         else:
             extraData['partialTV'] = 1
 
-		#Extended Metadata
+        #Extended Metadata
         if not settings.get_setting('skipmetadata'):
             details['cast']     = tempcast
             details['director'] = " / ".join(tempdir)
             details['writer']   = " / ".join(tempwriter)
             details['genre']    = " / ".join(tempgenre)
-			
+            
         #Create URL based on whether we are going to flatten the season view
         if settings.get_setting('flatten') == "2":
             printDebug.debug("Flattening all shows")
@@ -885,7 +885,7 @@ def TVEpisodes( url, tree=None ):
                    'source'       : 'tvepisodes',
                    'thumb'        : get_thumb(episode, server) ,
                    'fanart_image' : getFanart(episode, server) ,
-				   'tvshow_image' : getTVimage(episode, server, seasonThumb=True) ,
+                   'tvshow_image' : getTVimage(episode, server, seasonThumb=True) ,
                    'key'          : episode.get('key',''),
                    'ratingKey'    : str(episode.get('ratingKey',0)),
                    'duration'     : duration,
@@ -1167,7 +1167,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         full_data = True
 
     streams=getAudioSubtitlesMedia(server,tree, full_data)
-	
+    
     if force and streams['type'] == "music":
         playPlaylist(server, streams)
         return
@@ -1231,7 +1231,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         if resume:
             item.setProperty('ResumeTime', str(resume) )
             item.setProperty('TotalTime', str(duration) )
-			item.setProperty('StartOffset', str(resume) )
+            item.setProperty('StartOffset', str(resume) )
             printDebug.info("Playback from resume point: %s" % resume)
 
     if streams['type'] == "picture":
@@ -1244,7 +1244,7 @@ def playLibraryMedia( vids, override=False, force=None, full_data=False, shelf=F
         return
     else:
         start = xbmcplugin.setResolvedUrl(pluginhandle, True, item)
-		if shelf:
+        if shelf:
             # if launched from widget, use player.play for playback so artwork and resume works correctly
             xbmcplugin.setResolvedUrl(pluginhandle, False, item)
             start = xbmc.Player().play(playurl,item)
@@ -2390,7 +2390,7 @@ def getTVimage(data, server, seasonThumb=False, prefer_season=False, width=400, 
             return server.get_kodi_header_formatted_url('/photo/:/transcode?url=%s&width=%s&height=%s' % (urllib.quote_plus('http://localhost:32400' + thumbnail), width, height))
 
     return GENERIC_THUMBNAIL
-	
+    
 def getFanart(data, server, width=1280, height=720):
     """
         Simply take a URL or path and determine how to format for fanart
@@ -2664,7 +2664,7 @@ def start_plexbmc():
     play_transcode = True if int(params.get('transcode', 0)) == 1 else False
     param_identifier = params.get('identifier')
     param_indirect = params.get('indirect')
-	param_limit=int(params.get('limit',-1))
+    param_limit=int(params.get('limit',-1))
     force = params.get('force')
 
     if command_name is None:
@@ -2712,15 +2712,15 @@ def start_plexbmc():
         WINDOW = xbmcgui.Window(xbmcgui.getCurrentWindowId())
         WINDOW.clearProperty("heading")
         WINDOW.clearProperty("heading2")
-		
-		#Limit Dynamic Shelf Items
-	    if ( param_limit > 0 ):
-	       param_url="%s?X-Plex-Container-Start=0&X-Plex-Container-Size=%s" % (param_url, param_limit)
+        
+        #Limit Dynamic Shelf Items
+        if ( param_limit > 0 ):
+           param_url="%s?X-Plex-Container-Start=0&X-Plex-Container-Size=%s" % (param_url, param_limit)
 
-	    #Debug
+        #Debug
         if settings.get_debug() >= printDebug.DEBUG_INFO:
             print "PleXBMC -> Mode: %s " % mode
-			print "PleXBMC -> Limit: %s" % param_limit
+            print "PleXBMC -> Limit: %s" % param_limit
             print "PleXBMC -> URL: %s" % param_url
             print "PleXBMC -> Name: %s" % param_name
             print "PleXBMC -> identifier: %s" % param_identifier
