@@ -144,10 +144,10 @@ def amberskin():
             window.setProperty("plexbmc.%d.released" % section_count,
                                "ActivateWindow(%s,%s%s%s&mode=%s,return)" % (
                                    window_name, base_url, path, "/newest", mode))
-			WINDOW.setProperty("plexbmc.%d.ondeck.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/onDeck", mode, settings.get_setting('shelflimit') ))
+            WINDOW.setProperty("plexbmc.%d.ondeck.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/onDeck", mode, settings.get_setting('shelflimit') ))
             WINDOW.setProperty("plexbmc.%d.recent.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/recentlyAdded", mode, settings.get_setting('shelflimit') ))
 
-	    #Set shared flag
+        #Set shared flag
             if not server.is_owned():
                WINDOW.setProperty("plexbmc.%d.shared"     % (sectionCount) , "true")
             else:
