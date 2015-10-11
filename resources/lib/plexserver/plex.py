@@ -10,6 +10,7 @@ from .plex_gdm import PlexGdm
 from ..common import GLOBAL_SETUP, REQUIRED_REVISION  # const
 from ..common import PrintDebug, CacheControl, AddonSettings  # types
 from ..utils import is_ip
+import socket
 
 settings = AddonSettings()
 
@@ -499,6 +500,9 @@ class Plex:
             ip, port = ip.split(':')
 
         if not is_ip(ip):
+            ip = socket.gethostbyname(ip)
+
+        if not is_ip(ip):		
             printDebug.info("Not an IP Address")
             return PlexMediaServer(name="dummy", address='127.0.0.1', port=32400, discovery='local')
 
