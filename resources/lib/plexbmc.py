@@ -674,7 +674,7 @@ def TVShows( url, tree=None ):
 
         #Extended Metadata
         if not settings.get_setting('skipmetadata'):
-            details['cast']     = tempcast
+            details['cast']     = " / ".join(tempcast)
             details['director'] = " / ".join(tempdir)
             details['writer']   = " / ".join(tempwriter)
             details['genre']    = " / ".join(tempgenre)
