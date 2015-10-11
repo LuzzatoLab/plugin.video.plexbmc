@@ -144,11 +144,14 @@ def amberskin():
             window.setProperty("plexbmc.%d.released" % section_count,
                                "ActivateWindow(%s,%s%s%s&mode=%s,return)" % (
                                    window_name, base_url, path, "/newest", mode))
-            window.setProperty("plexbmc.%d.shared" % section_count, "false")
-            window.setProperty("plexbmc.%d.ondeck.content" % section_count,
-                               "%s%s%s&mode=%s" % (base_url, path, "/onDeck", mode))
-            window.setProperty("plexbmc.%d.recent.content" % section_count,
-                               "%s%s%s&mode=%s" % (base_url, path, "/recentlyAdded", mode))
+			WINDOW.setProperty("plexbmc.%d.ondeck.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/onDeck", mode, settings.get_setting('shelflimit') ))
+            WINDOW.setProperty("plexbmc.%d.recent.content" % (sectionCount) , "%s%s%s&mode=%s&limit=%s" % (base_url, path, "/recentlyAdded", mode, settings.get_setting('shelflimit') ))
+
+	    #Set shared flag
+            if not server.is_owned():
+               WINDOW.setProperty("plexbmc.%d.shared"     % (sectionCount) , "true")
+            else:
+               WINDOW.setProperty("plexbmc.%d.shared"     % (sectionCount) , "false")
 
             printDebug.debug(
                 "Building window properties index [%s] which is [%s]" % (section_count, section.get_title()))
@@ -163,7 +166,7 @@ def amberskin():
                            "ActivateWindow(VideoLibrary,plugin://plugin.video.plexbmc/?url=/&mode=%s,return)" %
                            Mode.SHARED_ALL)
         window.setProperty("plexbmc.%d.type" % section_count, "shared")
-        window.setProperty("plexbmc.%d.shared" % section_count, "true")
+        window.setProperty("plexbmc.%d.shared" % section_count, "false")
         section_count += 1
 
     elif shared_count != 0:

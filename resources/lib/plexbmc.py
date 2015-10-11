@@ -219,12 +219,18 @@ def addGUIItem(url, details, extraData, context=None, folder=True):
     poster = extraData.get('thumb', '')
     banner = extraData.get('banner', '')
     season_thumb = extraData.get('season_thumb', '')
+    tvshow_image = extraData.get('tvshow_image', '')
+    
     if season_thumb: poster = season_thumb
     
     if fanart:
         printDebug.debug("Setting fan art as %s" % fanart)
         liz.setProperty('fanart_image', fanart)
-        
+    
+    if tvshow_image:
+        printDebug.debug("Setting TV Show Image as %s" % tvshow_image)
+        liz.setProperty('tvshow_image', '%s' % tvshow_image)
+    
     if banner:
         printDebug.debug("Setting banner as %s" % banner)
         liz.setProperty('banner', '%s' % banner)
@@ -414,7 +420,8 @@ def enforceSkinView(mode):
                  '0' : 'skin.quartz' ,
                  '1' : 'skin.quartz3' ,
                  '3' : 'skin.amber',
-                 '4' : 'skin.aeon.nox.5' }
+                 '4' : 'skin.aeon.nox.5' ,
+                 '5' : 'skin.night' }
 
     if skin_map[skinname] not in current_skin_name:
         printDebug.debug("Do not have the correct skin [%s] selected in settings [%s] - ignoring" % (current_skin_name, skin_map[skinname]))
@@ -505,11 +512,28 @@ def enforceSkinView(mode):
                        'Wall'       : 503 ,
                        'BigList'    : 510 }
 
+    Night_views = {    'List #1' : 100,
+                       'List #2' : 110,
+                       'List #3' : 120,
+                       'Poster #1' : 200,
+                       'Poster #2' : 210,
+                       'Poster #3' : 220,
+                       'Panel #1' : 300,
+                       'Panel #2' : 310,
+                       'Panel #3' : 320,
+                       'Banner #1' : 400,
+                       'Banner #2' : 410,
+                       'Banner #3' : 420,
+                       'Custom #1' : 500,
+                       'Custom #2' : 510,
+                       'Custom #3' : 520 }
+
     skin_list={"0" : Quartz_views ,
                "1" : QuartzV3_views,
                "2" : Confluence_views,
                "3" : Amber_views,
-               "4" : aeon_nox_views }
+               "4" : aeon_nox_views,
+               "5" : Night_views }
 
     printDebug.debug("Using skin view: %s" % skin_list[skinname][viewname])
 
@@ -619,7 +643,10 @@ def TVShows( url, tree=None ):
                  'episode'    : int(show.get('leafCount',0)) ,
                  'mpaa'       : show.get('contentRating','') ,
                  'aired'      : show.get('originallyAvailableAt','') ,
-                 'genre'      : " / ".join(tempgenre) }
+                 'premiered'  : show.get('originallyAvailableAt','') ,
+                 'year'       : int(show.get('year',0)) ,
+                 'duration'   : int(show.get('duration',0))/1000/60 ,
+                 'rating'     : float(show.get('rating',0)) }
 
         extraData={'type'              : 'video' ,
                    'source'            : 'tvshows',
@@ -645,6 +672,13 @@ def TVShows( url, tree=None ):
         else:
             extraData['partialTV'] = 1
 
+        #Extended Metadata
+        if not settings.get_setting('skipmetadata'):
+            details['cast']     = tempcast
+            details['director'] = " / ".join(tempdir)
+            details['writer']   = " / ".join(tempwriter)
+            details['genre']    = " / ".join(tempgenre)
+            
         #Create URL based on whether we are going to flatten the season view
         if settings.get_setting('flatten') == "2":
             printDebug.debug("Flattening all shows")
@@ -851,6 +885,7 @@ def TVEpisodes( url, tree=None ):
                    'source'       : 'tvepisodes',
                    'thumb'        : get_thumb(episode, server) ,
                    'fanart_image' : getFanart(episode, server) ,
+                   'tvshow_image' : getTVimage(episode, server, seasonThumb=True) ,
                    'key'          : episode.get('key',''),
                    'ratingKey'    : str(episode.get('ratingKey',0)),
                    'duration'     : duration,
@@ -2330,6 +2365,32 @@ def music( url, tree=None ):
 
     xbmcplugin.endOfDirectory(pluginhandle,cacheToDisc=settings.get_setting('kodicache'))
 
+def getTVimage(data, server, seasonThumb=False, prefer_season=False, width=400, height=400):
+    '''
+        Simply take a URL or path and determine how to format for images
+        @ input: elementTree element, server name
+        @ return formatted URL
+    '''
+
+    if seasonThumb:
+        if prefer_season:
+            thumbnail=data.get('parentThumb',data.get('grandparentThumb','')).split('?t')[0].encode('utf-8')
+        else:
+            thumbnail=data.get('grandparentThumb','').split('?t')[0].encode('utf-8')
+    else:
+        thumbnail=data.get('thumb','').split('?t')[0].encode('utf-8')
+
+    if thumbnail.startswith("http"):
+        return thumbnail
+
+    elif thumbnail.startswith('/'):
+        if settings.get_setting('fullres_thumbs'):
+            return server.get_kodi_header_formatted_url(thumbnail)
+        else:
+            return server.get_kodi_header_formatted_url('/photo/:/transcode?url=%s&width=%s&height=%s' % (urllib.quote_plus('http://localhost:32400' + thumbnail), width, height))
+
+    return GENERIC_THUMBNAIL
+    
 def getFanart(data, server, width=1280, height=720):
     """
         Simply take a URL or path and determine how to format for fanart
@@ -2603,6 +2664,7 @@ def start_plexbmc():
     play_transcode = True if int(params.get('transcode', 0)) == 1 else False
     param_identifier = params.get('identifier')
     param_indirect = params.get('indirect')
+    param_limit=int(params.get('limit',-1))
     force = params.get('force')
 
     if command_name is None:
@@ -2650,9 +2712,15 @@ def start_plexbmc():
         WINDOW = xbmcgui.Window(xbmcgui.getCurrentWindowId())
         WINDOW.clearProperty("heading")
         WINDOW.clearProperty("heading2")
+        
+        #Limit Dynamic Shelf Items
+        if ( param_limit > 0 ):
+           param_url="%s?X-Plex-Container-Start=0&X-Plex-Container-Size=%s" % (param_url, param_limit)
 
+        #Debug
         if settings.get_debug() >= printDebug.DEBUG_INFO:
             print "PleXBMC -> Mode: %s " % mode
+            print "PleXBMC -> Limit: %s" % param_limit
             print "PleXBMC -> URL: %s" % param_url
             print "PleXBMC -> Name: %s" % param_name
             print "PleXBMC -> identifier: %s" % param_identifier
