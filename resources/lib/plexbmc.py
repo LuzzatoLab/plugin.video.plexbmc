@@ -626,10 +626,21 @@ def TVShows( url, tree=None ):
     for show in ShowTags:
 
         tempgenre=[]
+        tempcast=[]
+        tempdir=[]
+        tempwriter=[]
 
         for child in show:
-            if child.tag == "Genre":
-                        tempgenre.append(child.get('tag',''))
+            if child.tag == "Media":
+                mediaarguments = dict(child.items())
+            elif child.tag == "Genre" and not settings.get_setting('skipmetadata'):
+                tempgenre.append(child.get('tag'))
+            elif child.tag == "Writer"  and not settings.get_setting('skipmetadata'):
+                tempwriter.append(child.get('tag'))
+            elif child.tag == "Director"  and not settings.get_setting('skipmetadata'):
+                tempdir.append(child.get('tag'))
+            elif child.tag == "Role"  and not settings.get_setting('skipmetadata'):
+                tempcast.append(child.get('tag'))
 
         watched = int(show.get('viewedLeafCount',0))
 
@@ -674,7 +685,7 @@ def TVShows( url, tree=None ):
 
         #Extended Metadata
         if not settings.get_setting('skipmetadata'):
-            details['cast']     = " / ".join(tempcast)
+            details['cast']     = tempcast
             details['director'] = " / ".join(tempdir)
             details['writer']   = " / ".join(tempwriter)
             details['genre']    = " / ".join(tempgenre)
